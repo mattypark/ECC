@@ -127,7 +127,7 @@ Este repositorio contiene solo el código. Las guías explican todo.
 - **Expansión de flujos de trabajo de operador y salida** — `brand-voice`, `social-graph-ranker`, `connections-optimizer`, `customer-billing-ops`, `ecc-tools-cost-audit`, `google-workspace-ops`, `project-flow-ops` y `workspace-surface-audit` completan el carril de operador.
 - **Herramientas de medios y lanzamiento** — `manim-video`, `remotion-video-creation` y superficies de publicación social actualizadas integran la creación de contenido técnico y de lanzamiento en el mismo sistema.
 - **Crecimiento de frameworks y productos** — `nestjs-patterns`, superficies de instalación más ricas para Codex/OpenCode y empaquetado cross-harness expandido mantienen el repo utilizable más allá de Claude Code.
-- **Pack de skills de mercados de predicción Itô** — `ito-market-intelligence`, `ito-basket-compare`, `ito-trade-planner`, `ito-data-atlas-agent`, `prediction-market-oracle-research` y `prediction-market-risk-review` añaden flujos de trabajo públicos de mercado/cartera no asesorados, manteniendo el acceso a la API de Itô separado de la facturación de ECC Tools.
+- **Pack de skills de mercados de predicción Itô** — la skill consolidada `ito-baskets` (índice de cestas de solo lectura, comparación, briefs de mercado y hojas de planificación no ejecutables; reemplaza a las antiguas `ito-market-intelligence`, `ito-basket-compare`, `ito-trade-planner` y `ito-data-atlas-agent`), junto con `prediction-market-oracle-research` y `prediction-market-risk-review`, añaden flujos de trabajo públicos de mercado/cesta no asesorados, manteniendo el acceso a la API de Itô separado de la facturación de ECC Tools.
 - **Pack de skills de optimización** — `parallel-execution-optimizer`, `benchmark-optimization-loop`, `data-throughput-accelerator`, `latency-critical-systems` y `recursive-decision-ledger` convierten los prompts de velocidad/recursión repetidos en flujos de trabajo acotados de benchmark, rendimiento y decisiones.
 - **ECC 2.0 alpha incluido en el árbol** — el prototipo del plano de control en Rust en `ecc2/` ya compila localmente y expone los comandos `dashboard`, `start`, `sessions`, `status`, `stop`, `resume` y `daemon`. Está disponible como alpha, aún no como versión general.
 - **Instantáneas de estado del operador** — `ecc status --markdown --write status.md` convierte el almacén de estado local en un informe portátil de transferencia que cubre disponibilidad, sesiones activas, estado de ejecución de skills, estado de la instalación, eventos de gobernanza pendientes y elementos de trabajo vinculados de Linear/GitHub/transferencias. Usa `ecc work-items upsert ...` para entradas manuales, `ecc work-items sync-github --repo owner/repo` para el estado de la cola de PRs/issues, y `ecc status --exit-code` para hacer fallar la automatización cuando la disponibilidad requiere atención.
@@ -757,16 +757,13 @@ cp -r rules/golang ~/.claude/rules/ecc/
 cp -r rules/php ~/.claude/rules/ecc/
 cp -r rules/arkts ~/.claude/rules/ecc/
 
-# Copiar skills primero (superficie principal de flujo de trabajo)
-# Recomendado (nuevos usuarios): solo skills generales/básicas
-mkdir -p ~/.claude/skills/ecc
-cp -r .agents/skills/* ~/.claude/skills/ecc/
-cp -r skills/search-first ~/.claude/skills/ecc/
+# Instalar skills con el instalador consciente de migraciones.
+# Conserva skills del usuario, informa conflictos y evita sobrescribirlos.
+node scripts/install-apply.js --target claude --modules workflow-quality
 
-# Opcional: añadir skills específicas de framework solo cuando las necesites
-# for s in django-patterns django-tdd laravel-patterns springboot-patterns quarkus-patterns; do
-# cp -r skills/$s ~/.claude/skills/ecc/
-# done
+# Opcional: instalar skills concretas solo cuando las necesites.
+node scripts/install-apply.js --target claude --skills search-first
+# node scripts/install-apply.js --target claude --skills django-patterns,django-tdd
 
 # Opcional: mantener compatibilidad con entradas slash durante la migración
 mkdir -p ~/.claude/commands
